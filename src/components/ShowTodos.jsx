@@ -1,25 +1,19 @@
-function ShowTodos({todos}) {
+function ShowTodos({ todos }) {
     return (
         <div>
             <ul>
-                {/* Map over the todos array and render each todo item as a list item */}
-                {
-                    todos.map(
-                        todo => ( 
-                            <li 
-                                // Display the title of the todo item
-                                // The key prop is used to help React identify which items have 
-                                // changed, are added, or are removed.
-                                key={todo.id}>{todo.title} 
-                            </li>
-                        )
-                    )
-                }
+                {/* Render each todo as a list item */}
+                {todos.map(todo => (
+                    <li
+                        key={todo.id} // Unique key used by React to track list items
+                    >
+                        {/* Display the todo title */}
+                        {todo.title}
+                    </li>
+                ))}
             </ul>
         </div>
     );
 }
 
 export default ShowTodos;
-
-            
