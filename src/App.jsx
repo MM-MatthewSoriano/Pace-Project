@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
+import TimerDisplay from './components/TimerDisplay.jsx'
 import './App.css'
 
 // This is the main component of the app
@@ -59,8 +60,10 @@ function App() {
     // JSX: this displays the current counter value in the page
     return (
         <div>
+
             {/* Display the timer in minutes and seconds format */}
-            <h1>{minutes.toString().padStart(2, "0")}:{seconds.toString().padStart(2, "0")}</h1>
+            {/* Using the TimerDisplay component with minutes and seconds props */}
+            <TimerDisplay minutes={minutes} seconds={seconds} />
             <button onClick={() => setHasStarted(true)}>Start</button>
             <button onClick={() => setHasStarted(false)}>Stop</button>
             <button onClick={
@@ -71,6 +74,7 @@ function App() {
             }>
             Reset
             </button>
+
         </div>
     );
 }
