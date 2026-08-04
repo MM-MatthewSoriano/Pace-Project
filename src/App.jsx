@@ -11,7 +11,7 @@ import './App.css'
 function App() {
 
     // -----Custom Hooks-----
-    // Use the custom hook to get timer functionality
+    // Use the custom hook useTimer to get timer functionality
     const { minutes, seconds, handleStart, handleStop, handleReset } = useTimer(2); 
 
     // -----JSX-----
