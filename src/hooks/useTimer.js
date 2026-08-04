@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 
 function useTimer(initialTime) {
 
+    // Encapsulation
+    // This custom hook encapsulates the timer logic, making it reusable across different components. 
+    // It manages the timer state and provides functions to control the timer.
+
     // -----Use States-----
     const [counter, setCounter] = useState(initialTime); // creates a piece of state called counter, starting at 0
     const [hasStarted, setHasStarted] = useState(false); // creates a piece of state called hasStarted, set to false
