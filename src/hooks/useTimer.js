@@ -10,6 +10,12 @@ function useTimer(initialTime) {
     const [counter, setCounter] = useState(initialTime); // creates a piece of state called counter, starting at 0
     const [hasStarted, setHasStarted] = useState(false); // creates a piece of state called hasStarted, set to false
 
+    // -----Boolean Flags-----
+    // Information Hiding
+    // The hook hides how completion is determined.
+    // Components receive a simple `isComplete` flag instead of needing
+    // to inspect or calculate from the internal counter state.
+    const isComplete = counter === 0; // A boolean flag that indicates if the timer has completed (counter is 0)
 
     // -----Derived States-----
     const minutes = Math.floor(counter / 60); // Calculate minutes from counter
@@ -73,7 +79,13 @@ function useTimer(initialTime) {
     }, [counter]); // The effect runs again whenever counter changes
 
     // Return everything that the component needs to use the timer functionality
-    return { minutes, seconds, handleStart, handleStop, handleReset }; 
+    return {
+        minutes, 
+        seconds, 
+        handleStart, 
+        handleStop, 
+        handleReset 
+    }; 
 }
 
 export default useTimer;
