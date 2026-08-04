@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import TimerDisplay from './components/TimerDisplay.jsx'
 import TimerControls from './components/TimerControls.jsx'
 import CompletionMessage from './components/CompletionMessage.jsx'
+import ShowTodos from './components/ShowTodos.jsx'
 import useTimer from './hooks/useTimer.js'
+import useTodos from './hooks/useTodos.js'
 import './App.css'
 
 // This is the main component of the app
@@ -19,12 +17,32 @@ function App() {
         handleStart, 
         handleStop, 
         handleReset,
-        isComplete 
+        isComplete,
     } = useTimer(2); 
 
+    // Use the custom hook useTodos to get todos from the API
+    const {
+        todos,
+        loading,
+        error,
+    } = useTodos(); 
+
     // -----JSX-----
+    // Conditional Rendering
+    // If the data is still loading, show a loading message
+    if (loading) {
+        return <h1>Loading... </h1>
+    }
+
+    // If there was an error fetching the data, show an error message
+    if (error) {
+        return <h1>{error.message}</h1>
+    }
+
+    // If the data has loaded and there is no error, show the main app content
     return (
         <div>
+
             {/* Display the timer in minutes and seconds format */}
             {/* Using the TimerDisplay component with minutes and seconds props */}
             <TimerDisplay minutes={minutes} seconds={seconds} />
@@ -34,6 +52,9 @@ function App() {
             {/* Display the start, stop, and reset buttons to control the timer display */}
             {/* Using the TimerControls component with onStart, onStop, onReset as props */}
             <TimerControls onStart={handleStart} onStop={handleStop} onReset={handleReset} />
+
+            {/* Display the todos list */}
+            <ShowTodos todos={todos}/>
         </div>
     );
 }

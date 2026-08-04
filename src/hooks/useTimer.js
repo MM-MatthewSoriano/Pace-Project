@@ -7,10 +7,12 @@ function useTimer(initialTime) {
     // It manages the timer state and provides functions to control the timer.
 
     // -----Use States-----
+    // [Timer state]
     const [counter, setCounter] = useState(initialTime); // creates a piece of state called counter, starting at 0
     const [hasStarted, setHasStarted] = useState(false); // creates a piece of state called hasStarted, set to false
 
     // -----Boolean Flags-----
+    
     // Information Hiding
     // The hook hides how completion is determined.
     // Components receive a simple `isComplete` flag instead of needing
@@ -20,6 +22,7 @@ function useTimer(initialTime) {
     // -----Derived States-----
     const minutes = Math.floor(counter / 60); // Calculate minutes from counter
     const seconds = counter % 60; // Calculate remaining seconds from counter
+
 
 
     // ------Functions------
@@ -41,6 +44,7 @@ function useTimer(initialTime) {
 
 
     // ------Use Effects-----
+    // [Timer Effect]
     // Start a timer that updates the counter every second
     useEffect(() => {
 
@@ -84,7 +88,8 @@ function useTimer(initialTime) {
         seconds, 
         handleStart, 
         handleStop, 
-        handleReset 
+        handleReset,
+        isComplete, 
     }; 
 }
 
