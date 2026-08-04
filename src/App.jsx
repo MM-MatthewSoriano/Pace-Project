@@ -3,6 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import TimerDisplay from './components/TimerDisplay.jsx'
+import TimerControls from './components/TimerControls.jsx'
 import './App.css'
 
 // This is the main component of the app
@@ -12,9 +13,31 @@ function App() {
     const [counter, setCounter] = useState(2); // creates a piece of state called counter, starting at 0
     const [hasStarted, setHasStarted] = useState(false); // creates a piece of state called hasStarted, set to false
 
+
+
     // Derived States
     const minutes = Math.floor(counter / 60); // Calculate minutes from counter
     const seconds = counter % 60; // Calculate remaining seconds from counter
+
+
+
+    // Functions
+    // Start the timer by setting [hasStarted] to true
+    function handleStart() {
+        setHasStarted(true);
+    }
+
+    // Stop the timer by setting [hasStarted] to false
+    function handleStop() {
+        setHasStarted(false); 
+    }
+
+    // Reset the timer by setting [counter] to 2 and [hasStarted] to false
+    function handleReset() {
+        setCounter(2); 
+        setHasStarted(false); 
+    }
+
 
 
     // Use Effects
@@ -44,7 +67,6 @@ function App() {
 
     }, [hasStarted]); // The effect runs again whenever hasStarted changes
 
-
     // Checks if the counter hits 0 and sets [hasStarted] to false
     useEffect(() => {
 
@@ -57,24 +79,17 @@ function App() {
     }, [counter]); // The effect runs again whenever counter changes
 
 
+    
     // JSX: this displays the current counter value in the page
     return (
         <div>
-
             {/* Display the timer in minutes and seconds format */}
             {/* Using the TimerDisplay component with minutes and seconds props */}
             <TimerDisplay minutes={minutes} seconds={seconds} />
-            <button onClick={() => setHasStarted(true)}>Start</button>
-            <button onClick={() => setHasStarted(false)}>Stop</button>
-            <button onClick={
-                () => {
-                    setCounter(2)
-                    setHasStarted(false)
-                }
-            }>
-            Reset
-            </button>
-
+            
+            {/* Display the start, stop, and reset buttons to control the timer display */}
+            {/* Using the TimerControls component with onStart, onStop, onReset as props */}
+            <TimerControls onStart={handleStart} onStop={handleStop} onReset={handleReset} />
         </div>
     );
 }
