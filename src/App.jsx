@@ -2,6 +2,7 @@ import TimerDisplay from './components/TimerDisplay.jsx'
 import TimerControls from './components/TimerControls.jsx'
 import CompletionMessage from './components/CompletionMessage.jsx'
 import ShowTodos from './components/ShowTodos.jsx'
+import AddTodo from './components/AddTodo.jsx'
 import useTimer from './hooks/useTimer.js'
 import useTodos from './hooks/useTodos.js'
 import './App.css'
@@ -25,6 +26,7 @@ function App() {
         todos,
         loading,
         error,
+        addNewTodo
     } = useTodos(); 
 
     // -----JSX-----
@@ -52,6 +54,9 @@ function App() {
             {/* Display the start, stop, and reset buttons to control the timer display */}
             {/* Using the TimerControls component with onStart, onStop, onReset as props */}
             <TimerControls onStart={handleStart} onStop={handleStop} onReset={handleReset} />
+
+            {/*  */}
+            <AddTodo addNewTodo={addNewTodo} />
 
             {/* Display the todos list */}
             <ShowTodos todos={todos}/>

@@ -7,6 +7,29 @@ function useTodos() {
     const [loading, setLoading] = useState(true); // when the component first mounts, show a loading state, set loading to true
     const [error, setError] = useState(null); // check for errors when fetching data, set error to null
    
+    // -----Functions-----
+    // Add a new todo to the list of todos
+    // newTodo is the title of the new todo to be added
+    function addNewTodo(newTodo) { 
+
+        // setTodos is called to update the todos state with a new array that includes the previous todos and the new todo
+        // inside setTodos, we use a callback function that takes the previous todos as an argument (prevTodos) and returns 
+        // a new array that includes all the previous todos and the new todo object.
+        setTodos(prevTodos => [ 
+
+            // spread operator is used to copy the previous todos into the new array
+            ...prevTodos,
+
+            // New todo object with a unique id, title, and completed status
+            {
+                id: Date.now(),
+                title: newTodo,
+                completed: false
+            }
+            
+        ]);
+    }
+
     // -----Use Effects----- 
     // Fetch data from the API when the component mounts
     useEffect(() => {
@@ -50,6 +73,7 @@ function useTodos() {
         todos,
         loading,
         error,
+        addNewTodo
     }; 
 }
 
