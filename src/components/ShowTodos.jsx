@@ -1,4 +1,4 @@
-function ShowTodos({ todos }) {
+function ShowTodos({ todos, deleteTodo }) {
     return (
         <div>
             <ul>
@@ -9,6 +9,12 @@ function ShowTodos({ todos }) {
                     >
                         {/* Display the todo title */}
                         {todo.title}
+
+                        {/* 
+                        deleteTodo is called directly because it is a function that takes an id as an argument.
+                        The onClick event handler is set to call deleteTodo with the todo's id when the button is clicked. 
+                        */}
+                        <button onClick={deleteTodo(todo.id)}> delete </button>
                     </li>
                 ))}
             </ul>

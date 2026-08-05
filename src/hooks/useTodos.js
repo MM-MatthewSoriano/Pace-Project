@@ -26,8 +26,13 @@ function useTodos() {
                 title: newTodo,
                 completed: false
             }
-            
+
         ]);
+    }
+
+    // Delete a todo from the list of todos
+    function deleteTodo(id) {
+
     }
 
     // -----Use Effects----- 
@@ -73,7 +78,8 @@ function useTodos() {
         todos,
         loading,
         error,
-        addNewTodo
+        addNewTodo,
+        deleteTodo
     }; 
 }
 

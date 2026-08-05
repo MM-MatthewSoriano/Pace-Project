@@ -26,7 +26,8 @@ function App() {
         todos,
         loading,
         error,
-        addNewTodo
+        addNewTodo,
+        deleteTodo  
     } = useTodos(); 
 
     // -----JSX-----
@@ -59,7 +60,7 @@ function App() {
             <AddTodo addNewTodo={addNewTodo} />
 
             {/* Display the todos list */}
-            <ShowTodos todos={todos}/>
+            <ShowTodos todos={todos} deleteTodo={deleteTodo}/>
         </div>
     );
 }
