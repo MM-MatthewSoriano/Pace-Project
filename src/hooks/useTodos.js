@@ -31,9 +31,70 @@ function useTodos() {
     }
 
     // Delete a todo from the list of todos
+    // the id of the todo to be deleted is passed as an argument from the 
+    // ShowTodos component when the delete button is clicked
     function deleteTodo(id) {
 
+        // React gives you the latest array of todos.
+        setTodos(prevTodos => {
+            return prevTodos.filter(todo => todo.id !== id);
+        }) 
     }
+
+    // Toggle the completed status of a todo
+    // the id of the todo to be toggled is passed as an argument from the 
+    // ShowTodos component when the checkbox is clicked
+    function toggleTodo(id) {
+
+        // React gives you the latest array of todos.
+        setTodos(prevTodos => { 
+
+            // Create a new array by looking at each todo one by one.
+            return prevTodos.map(todo => {
+
+                // "Is this the todo the user clicked?"
+                if (todo.id === id) {
+
+                    // Create a new object that copies all the existing properties.
+                    // Overwrite only the completed property.   
+                    return {
+                        ...todo,
+                        completed: !todo.completed
+                    }
+                }
+
+                // If this isn't the todo we're updating, leave it unchanged.
+                return todo;
+            })
+        })
+    }
+
+    function updateTodo(id, newTitle) {
+
+        // React gives you the latest array of todos.
+        setTodos(prevTodos => { 
+
+            // Create a new array by looking at each todo one by one.
+            return prevTodos.map(todo => {
+
+                // "Is this the todo the user clicked?"
+                if (todo.id === id) {
+
+                    // Create a new object that copies all the existing properties.
+                    // Overwrite only the completed property.   
+                    return {
+                        ...todo,
+                        title: newTitle
+                    }
+                }
+
+                // If this isn't the todo we're updating, leave it unchanged.
+                return todo;
+            })
+        })
+    }
+
+    
 
     // -----Use Effects----- 
     // Fetch data from the API when the component mounts
@@ -79,7 +140,9 @@ function useTodos() {
         loading,
         error,
         addNewTodo,
-        deleteTodo
+        deleteTodo,
+        toggleTodo,
+        updateTodo
     }; 
 }
 
