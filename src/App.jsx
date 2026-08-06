@@ -24,8 +24,11 @@ function App() {
     // Use the custom hook useTodos to get todos from the API
     const {
         todos,
-        loading,
-        error,
+        // loading,
+        // error,
+        filteredTodos,
+        filter,
+        setFilter,
         addNewTodo,
         deleteTodo,
         toggleTodo,
@@ -35,14 +38,14 @@ function App() {
     // -----JSX-----
     // Conditional Rendering
     // If the data is still loading, show a loading message
-    if (loading) {
-        return <h1>Loading... </h1>
-    }
+    // if (loading) {
+    //     return <h1>Loading... </h1>
+    // }
 
-    // If there was an error fetching the data, show an error message
-    if (error) {
-        return <h1>{error.message}</h1>
-    }
+    // // If there was an error fetching the data, show an error message
+    // if (error) {
+    //     return <h1>{error.message}</h1>
+    // }
 
     // If the data has loaded and there is no error, show the main app content
     return (
@@ -58,11 +61,16 @@ function App() {
             {/* Using the TimerControls component with onStart, onStop, onReset as props */}
             <TimerControls onStart={handleStart} onStop={handleStop} onReset={handleReset} />
 
-            {/*  */}
+            {/* Adds a new todo */}
             <AddTodo addNewTodo={addNewTodo} />
 
+            {/* Filtering buttons */}
+            <button onClick={() => setFilter("all")}>All</button>
+            <button onClick={() => setFilter("active")}>Active</button>
+            <button onClick={() => setFilter("completed")}>Completed</button>
+
             {/* Display the todos list */}
-            <ShowTodos todos={todos} deleteTodo={deleteTodo} toggleTodo={toggleTodo} updateTodo={updateTodo}/>
+            <ShowTodos todos={filteredTodos} deleteTodo={deleteTodo} toggleTodo={toggleTodo} updateTodo={updateTodo}/>
         </div>
     );
 }

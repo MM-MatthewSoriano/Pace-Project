@@ -1,11 +1,40 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
 function useTodos() {    
     
     // -----Use States-----
-    const [todos, setTodos] = useState([]); // API returns a list of todos, so an empty array is the right starting value. 
+    // Things that react needs to remember
+    const [todos, setTodos] = useState(
+
+        // Lazy Initializer: React only runs that function once, when creating the state.
+        // Typically needed when computing the initial state SYNCHRONOUSLY
+        () => { 
+            return JSON.parse(localStorage.getItem("todos")) || [];
+        }
+    ); 
+    const [filter, setFilter] = useState("all");
+
+    // These states are only typically needed for loading data ASYNCHRONOUSLY
     const [loading, setLoading] = useState(true); // when the component first mounts, show a loading state, set loading to true
     const [error, setError] = useState(null); // check for errors when fetching data, set error to null
+
+    // -----Derived States-----
+    // Derived states are things react can calculate
+    const completedTodos = todos.filter(todo => todo.completed); // todos that have been completed/true
+    const activeTodos = todos.filter(todo => !todo.completed); // todos that have not been completed/false
+    const filteredTodos = todos.filter(todo => {
+
+        if (filter === "completed") {
+            return todo.completed;
+        }
+
+        if (filter === "active") {
+            return !todo.completed;
+        }
+
+        return true;
+
+    })
    
     // -----Functions-----
     // Add a new todo to the list of todos
@@ -69,6 +98,7 @@ function useTodos() {
         })
     }
 
+    // Update todo
     function updateTodo(id, newTitle) {
 
         // React gives you the latest array of todos.
@@ -97,48 +127,70 @@ function useTodos() {
     
 
     // -----Use Effects----- 
-    // Fetch data from the API when the component mounts
+    // Saving todos to local storage
+    // Save the latest todos to localStorage whenever the todos state changes.
+    // JSON.stringify() converts the todos array into a string because
+    // localStorage can only store strings.
     useEffect(() => {
+        console.log("Saving:", todos)
+        localStorage.setItem("todos", JSON.stringify(todos));
+    }, [todos]);
 
-        // function fetchTodos is an async function that fetches data from the API
-        async function fetchTodos() {
+    // // Loading todos from local storage
+    // useEffect(() => {
+    //     const savedTodos = JSON.parse(
+    //         localStorage.getItem("todos")
+    //     ) || [];
+    //     setTodos(savedTodos);
+    //     setLoading(false)
+    // }, []);
 
-            // try block is used to catch any errors that occur during the fetch operation
-            try {
+
+    // // Fetch data from the API when the component mounts
+    // useEffect(() => {
+
+    //     // function fetchTodos is an async function that fetches data from the API
+    //     async function fetchTodos() {
+
+    //         // try block is used to catch any errors that occur during the fetch operation
+    //         try {
                 
-                // Send GET request, wait for server response.
-                const response = await fetch('https://jsonplaceholder.typicode.com/todos'); 
+    //             // Send GET request, wait for server response.
+    //             const response = await fetch('https://jsonplaceholder.typicode.com/todos'); 
 
-                // Ensure HTTP failures, Network Failures end in same catch block
-                if (!response.ok) {
-                    throw new Error('Failed to fetch todos.');
-                }
+    //             // Ensure HTTP failures, Network Failures end in same catch block
+    //             if (!response.ok) {
+    //                 throw new Error('Failed to fetch todos.');
+    //             }
 
-                const data = await response.json(); // Convert the response to JSON
-                console.log(data); // Log the data to the console
-                setTodos(data); // Update the todos state with the fetched data
-            }
+    //             const data = await response.json(); // Convert the response to JSON
+    //             console.log(data); // Log the data to the console
+    //             setTodos(data); // Update the todos state with the fetched data
+    //         }
 
-            // catch block is used to handle any errors that occur during the fetch operation
-            catch (error) {
-                setError(error); // Update the error state with the error that occurred
-            }
+    //         // catch block is used to handle any errors that occur during the fetch operation
+    //         catch (error) {
+    //             setError(error); // Update the error state with the error that occurred
+    //         }
 
-            // finally block is used to execute code after the try and catch blocks, regardless of whether an error occurred or not
-            finally {
-                setLoading(false); // Set loading to false after data is fetched  
-            }
+    //         // finally block is used to execute code after the try and catch blocks, regardless of whether an error occurred or not
+    //         finally {
+    //             setLoading(false); // Set loading to false after data is fetched  
+    //         }
   
-        }
-        fetchTodos(); // Call the async function to fetch todos
+    //     }
+    //     fetchTodos(); // Call the async function to fetch todos
 
-    }, []);
+    // }, []);
 
     // Return everything that the component needs to know about the todos state
     return {
         todos,
-        loading,
-        error,
+        // loading,
+        // error,
+        filteredTodos,
+        filter,
+        setFilter,
         addNewTodo,
         deleteTodo,
         toggleTodo,

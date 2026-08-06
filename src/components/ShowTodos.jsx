@@ -5,6 +5,9 @@ function ShowTodos({ todos, deleteTodo, toggleTodo, updateTodo }) {
     const [editingId, setEditingId] = useState(null);
     const [editingTitle, setEditingTitle] = useState("");
 
+    if (todos.length === 0) {
+        return <h1>None</h1>;
+    }
     return (
         <div>
             <ul>
