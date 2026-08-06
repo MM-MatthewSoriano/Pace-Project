@@ -194,6 +194,7 @@ function useTodos() {
     //     setLoading(false)
     // }, []);
 
+    
     // Use effect for logging sort changes
     useEffect(() => {
     console.log("Sorted todos changed:", filteredTodos);
