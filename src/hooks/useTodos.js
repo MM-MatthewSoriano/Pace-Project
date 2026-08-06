@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 
 function useTodos() {    
     
@@ -22,9 +22,16 @@ function useTodos() {
 
     // -----Derived States-----
     // Derived states are things react can calculate
-    const completedTodos = todos.filter(todo => todo.completed); // todos that have been completed/true
-    const activeTodos = todos.filter(todo => !todo.completed); // todos that have not been completed/false
-    const filtered = todos.filter(todo => {
+    // const completedTodos = todos.filter(todo => todo.completed); // todos that have been completed/true
+    // const activeTodos = todos.filter(todo => !todo.completed); // todos that have not been completed/false
+
+    // useMemo groups a calculation that produces a value.
+    // React remembers (memoizes) the returned value.
+    // The calculation only runs again when one of the dependencies changes.
+    const filteredTodos = useMemo(() => {
+
+        // filtered is a derived state that is filtered from todo
+        const filtered = todos.filter(todo => {
 
         if (filter === "completed") {
             return todo.completed;
@@ -36,43 +43,47 @@ function useTodos() {
 
         return true;
 
-    // Method Chaining
-    // Attaching another filter to the first filter
-    // Now React immediately takes that array and applies another filter
-    // That means the second .filter() operates on the result of the first one.
-    }).filter(todo => todo.title
-        .toLowerCase()
-        .includes(searchTitle.toLowerCase()));
+        // Method Chaining
+        // Attaching another filter to the first filter
+        // Now React immediately takes that array and applies another filter
+        // That means the second .filter() operates on the result of the first one.
+        }).filter(todo => todo.title
+            .toLowerCase()
+            .includes(searchTitle.toLowerCase()));
 
-    // After filtering, we need to sort it
-    // Sort mutates the array state if we were to directly use sort method on filtered state
-    // That is why we use the spread operator on filtered for the array itself to be immutable
-    // While still being able to copy the original array and filtered todos to be able to sort it
-    // Resulting to filteredTodos receiving all the changes
-    const filteredTodos = [...filtered];
+        // After filtering, we need to sort it
+        // Sort mutates the array state if we were to directly use sort method on filtered state
+        // That is why we use the spread operator on filtered for the array itself to be immutable
+        // While still being able to copy the original array and filtered todos to be able to sort it
+        // Resulting to filteredTodos receiving all the changes
+        const sortedTodos = [...filtered];
 
-    // switch decides which sorting algorithm to apply.
-    // Each case sorts the same array differently based on sortBy.
-    switch (sortBy) {
-        case "newest":
-            filteredTodos.sort((a,b) => b.id - a.id);
-            break;
+        // switch decides which sorting algorithm to apply.
+        // Each case sorts the same array differently based on sortBy.
+        switch (sortBy) {
+            case "newest":
+                sortedTodos.sort((a,b) => b.id - a.id);
+                break;
 
-        case "oldest":
-            filteredTodos.sort((a,b) => a.id - b.id);
-            break;
+            case "oldest":
+                sortedTodos.sort((a,b) => a.id - b.id);
+                break;
 
-        case "az":
-            filteredTodos.sort((a,b) => a.title.localeCompare(b.title));
-            break;
+            case "az":
+                sortedTodos.sort((a,b) => a.title.localeCompare(b.title));
+                break;
 
-        case "za":
-            filteredTodos.sort((a,b) => b.title.localeCompare(a.title));
-            break;
+            case "za":
+                sortedTodos.sort((a,b) => b.title.localeCompare(a.title));
+                break;
 
-        default:
-            break;
-    }
+            default:
+                break;
+        }
+
+        // return the filtered todo
+        return sortedTodos;
+    }, [todos, filter, searchTitle, sortBy]);
    
     // -----Functions-----
     // Add a new todo to the list of todos
@@ -182,6 +193,11 @@ function useTodos() {
     //     setTodos(savedTodos);
     //     setLoading(false)
     // }, []);
+
+    // Use effect for logging sort changes
+    useEffect(() => {
+    console.log("Sorted todos changed:", filteredTodos);
+    }, [filteredTodos]);
 
 
     // // Fetch data from the API when the component mounts
