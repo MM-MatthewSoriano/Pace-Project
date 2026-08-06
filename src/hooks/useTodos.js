@@ -13,6 +13,8 @@ function useTodos() {
         }
     ); 
     const [filter, setFilter] = useState("all");
+    const [searchTitle, setSearchTitle] = useState("");
+    const [sortBy, setSortBy] = useState("newest");
 
     // These states are only typically needed for loading data ASYNCHRONOUSLY
     const [loading, setLoading] = useState(true); // when the component first mounts, show a loading state, set loading to true
@@ -22,7 +24,7 @@ function useTodos() {
     // Derived states are things react can calculate
     const completedTodos = todos.filter(todo => todo.completed); // todos that have been completed/true
     const activeTodos = todos.filter(todo => !todo.completed); // todos that have not been completed/false
-    const filteredTodos = todos.filter(todo => {
+    const filtered = todos.filter(todo => {
 
         if (filter === "completed") {
             return todo.completed;
@@ -34,7 +36,43 @@ function useTodos() {
 
         return true;
 
-    })
+    // Method Chaining
+    // Attaching another filter to the first filter
+    // Now React immediately takes that array and applies another filter
+    // That means the second .filter() operates on the result of the first one.
+    }).filter(todo => todo.title
+        .toLowerCase()
+        .includes(searchTitle.toLowerCase()));
+
+    // After filtering, we need to sort it
+    // Sort mutates the array state if we were to directly use sort method on filtered state
+    // That is why we use the spread operator on filtered for the array itself to be immutable
+    // While still being able to copy the original array and filtered todos to be able to sort it
+    // Resulting to filteredTodos receiving all the changes
+    const filteredTodos = [...filtered];
+
+    // switch decides which sorting algorithm to apply.
+    // Each case sorts the same array differently based on sortBy.
+    switch (sortBy) {
+        case "newest":
+            filteredTodos.sort((a,b) => b.id - a.id);
+            break;
+
+        case "oldest":
+            filteredTodos.sort((a,b) => a.id - b.id);
+            break;
+
+        case "az":
+            filteredTodos.sort((a,b) => a.title.localeCompare(b.title));
+            break;
+
+        case "za":
+            filteredTodos.sort((a,b) => b.title.localeCompare(a.title));
+            break;
+
+        default:
+            break;
+    }
    
     // -----Functions-----
     // Add a new todo to the list of todos
@@ -188,9 +226,13 @@ function useTodos() {
         todos,
         // loading,
         // error,
+        searchTitle,
+        setSearchTitle,
         filteredTodos,
         filter,
         setFilter,
+        sortBy,
+        setSortBy,
         addNewTodo,
         deleteTodo,
         toggleTodo,
