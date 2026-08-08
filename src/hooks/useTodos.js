@@ -1,5 +1,15 @@
-import { useMemo, useEffect, useState, useCallback } from 'react';
-import useLocalStorage from "./useLocalStorage.js";
+import { useMemo, useEffect, useState, useCallback, useReducer } from 'react';
+// import useLocalStorage from "./useLocalStorage.js";
+
+function getInitialTodos() {
+    const savedTodos = localStorage.getItem("todos");
+
+    if (savedTodos !== null) {
+        return JSON.parse(savedTodos);
+    }
+
+    return [];
+}
 
 function useTodos() {    
     
@@ -10,7 +20,8 @@ function useTodos() {
     // -----Use States-----
     // Moved to useLocalStorage.js
     // // Things that react needs to remember
-    const [todos, setTodos] = useLocalStorage("todos",[]);
+    // const [todos, setTodos] = useLocalStorage("todos",[]);
+    const [todos, dispatch] = useReducer(todosReducer, [], getInitialTodos);
 
     //     // Lazy Initializer: React only runs that function once, when creating the state.
     //     // Typically needed when computing the initial state SYNCHRONOUSLY
@@ -114,25 +125,182 @@ function useTodos() {
     //     ]);
     // }
 
-    const addNewTodo = useCallback((newTodo) => {
+    // useReducer
+    function todosReducer(todos, action) {
 
-        // setTodos is called to update the todos state with a new array that includes the previous todos and the new todo
-        // inside setTodos, we use a callback function that takes the previous todos as an argument (prevTodos) and returns 
-        // a new array that includes all the previous todos and the new todo object.
-        setTodos(prevTodos => [ 
+        switch (action.type) {
+            case "DELETE_TODO":
+                // Create a new array by looking at each todo one by one.
+                // Keep every todo whose id does not match the id passed through action.payload.
+                return todos.filter(todo => todo.id !== action.payload);
 
-            // spread operator is used to copy the previous todos into the new array
-            ...prevTodos,
+            case "ADD_TODO":
+                // Create a new array by copying all existing todos.
+                // Add the new todo object passed through action.payload to the end of the array.
+                return [
+                    ...todos,
+                    action.payload
+                ];
 
-            // New todo object with a unique id, title, and completed status
-            {
+            case "TOGGLE_TODO":
+                // Create a new array by looking at each todo one by one.
+                return todos.map(todo => {
+
+                    // "Is this the todo the user clicked?"
+                    // action.payload contains the id of the todo that needs to be toggled.
+                    if (todo.id === action.payload) {
+
+                        // Create a new object that copies all the existing properties.
+                        // Overwrite only the completed property.
+                        // The ! operator changes true to false and false to true.
+                        return {
+                            ...todo,
+                            completed: !todo.completed
+                        };
+                    }
+
+                    // If this isn't the todo we're updating, leave it unchanged.
+                    return todo;
+                });
+
+            case "UPDATE_TODO":
+                // Create a new array by looking at each todo one by one.
+                return todos.map(todo => {
+
+                    // "Is this the todo the user clicked?"
+                    // action.payload.id contains the id of the todo that needs to be updated.
+                    if (todo.id === action.payload.id) {
+
+                        // Create a new object that copies all the existing properties.
+                        // Overwrite only the title property with the new title.
+                        return {
+                            ...todo,
+                            title: action.payload.newTitle
+                        };
+                    }
+
+                    // If this isn't the todo we're updating, leave it unchanged.
+                    return todo;
+                });
+
+            case "LOAD_TODOS":
+                // Replace the current todos with the todos loaded from localStorage.
+                return action.payload;
+
+            default:
+                return todos;
+
+        }
+    }
+
+    //     // Check if the action type is DELETE_TODO
+    //     if (action.type === "DELETE_TODO") {
+
+    //         // Create a new array by looking at each todo one by one.
+    //         // Keep every todo whose id does not match the id passed through action.payload.
+    //         return todos.filter(todo => todo.id !== action.payload);
+    //     }
+
+    //     // Check if the action type is ADD_TODO
+    //     if (action.type === "ADD_TODO") {
+
+    //         // Create a new array by copying all existing todos.
+    //         // Add the new todo object passed through action.payload to the end of the array.
+    //         return [
+    //             ...todos,
+    //             action.payload
+    //         ];
+    //     }
+
+    //     // Check if the action type is TOGGLE_TODO
+    //     if (action.type === "TOGGLE_TODO") {
+
+    //         // Create a new array by looking at each todo one by one.
+    //         return todos.map(todo => {
+
+    //             // "Is this the todo the user clicked?"
+    //             // action.payload contains the id of the todo that needs to be toggled.
+    //             if (todo.id === action.payload) {
+
+    //                 // Create a new object that copies all the existing properties.
+    //                 // Overwrite only the completed property.
+    //                 // The ! operator changes true to false and false to true.
+    //                 return {
+    //                     ...todo,
+    //                     completed: !todo.completed
+    //                 };
+    //             }
+
+    //             // If this isn't the todo we're updating, leave it unchanged.
+    //             return todo;
+    //         });
+    //     }
+
+    //     // Check if the action type is UPDATE_TODO
+    //     if (action.type === "UPDATE_TODO") {
+
+    //         // Create a new array by looking at each todo one by one.
+    //         return todos.map(todo => {
+
+    //             // "Is this the todo the user clicked?"
+    //             // action.payload.id contains the id of the todo that needs to be updated.
+    //             if (todo.id === action.payload.id) {
+
+    //                 // Create a new object that copies all the existing properties.
+    //                 // Overwrite only the title property with the new title.
+    //                 return {
+    //                     ...todo,
+    //                     title: action.payload.newTitle
+    //                 };
+    //             }
+
+    //             // If this isn't the todo we're updating, leave it unchanged.
+    //             return todo;
+    //         });
+    //     }
+
+    //     // Check if the action type is LOAD_TODOS
+    //     if (action.type === "LOAD_TODOS") {
+
+    //         // Replace the current todos with the todos loaded from localStorage.
+    //         return action.payload;
+    //     }
+
+    //     // Return todos if none of the action types matched.
+    //     return todos;
+    // }
+
+    // const addNewTodo = useCallback((newTodo) => {
+
+    //     // setTodos is called to update the todos state with a new array that includes the previous todos and the new todo
+    //     // inside setTodos, we use a callback function that takes the previous todos as an argument (prevTodos) and returns 
+    //     // a new array that includes all the previous todos and the new todo object.
+    //     setTodos(prevTodos => [ 
+
+    //         // spread operator is used to copy the previous todos into the new array
+    //         ...prevTodos,
+
+    //         // New todo object with a unique id, title, and completed status
+    //         {
+    //             id: Date.now(),
+    //             title: newTodo,
+    //             completed: false
+    //         }
+
+    //     ]);
+    // }, [setTodos]);
+
+    // useReducer
+    function addNewTodo(newTodo) {
+        dispatch({
+            type: "ADD_TODO",
+            payload: {
                 id: Date.now(),
                 title: newTodo,
                 completed: false
             }
-
-        ]);
-    }, [setTodos]);
+        });
+    }
 
     // Delete a todo from the list of todos
     // the id of the todo to be deleted is passed as an argument from the 
@@ -149,11 +317,19 @@ function useTodos() {
     // useCallback → remembers a FUNCTION
     // React.memo  → memoizes a COMPONENT
 
-    const deleteTodo = useCallback((id) => {
-        setTodos(prevTodos => {
-            return prevTodos.filter(todo => todo.id !== id);
-        }) 
-    },[setTodos])
+    // const deleteTodo = useCallback((id) => {
+    //     setTodos(prevTodos => {
+    //         return prevTodos.filter(todo => todo.id !== id);
+    //     }) 
+    // },[setTodos])
+
+    // Using the useReducer function
+    const deleteTodo = (id) => {
+        dispatch({
+            type: "DELETE_TODO",
+            payload: id
+        })
+    }
 
     // Toggle the completed status of a todo
     // the id of the todo to be toggled is passed as an argument from the 
@@ -183,28 +359,36 @@ function useTodos() {
     //     })
     // }
 
-    const toggleTodo = useCallback((id) => {
-        setTodos(prevTodos => { 
+    // const toggleTodo = useCallback((id) => {
+    //     setTodos(prevTodos => { 
 
-            // Create a new array by looking at each todo one by one.
-            return prevTodos.map(todo => {
+    //         // Create a new array by looking at each todo one by one.
+    //         return prevTodos.map(todo => {
 
-                // "Is this the todo the user clicked?"
-                if (todo.id === id) {
+    //             // "Is this the todo the user clicked?"
+    //             if (todo.id === id) {
 
-                    // Create a new object that copies all the existing properties.
-                    // Overwrite only the completed property.   
-                    return {
-                        ...todo,
-                        completed: !todo.completed
-                    }
-                }
+    //                 // Create a new object that copies all the existing properties.
+    //                 // Overwrite only the completed property.   
+    //                 return {
+    //                     ...todo,
+    //                     completed: !todo.completed
+    //                 }
+    //             }
 
-                // If this isn't the todo we're updating, leave it unchanged.
-                return todo;
-            })
+    //             // If this isn't the todo we're updating, leave it unchanged.
+    //             return todo;
+    //         })
+    //     })
+    // }, [setTodos])
+
+    // useReducer
+    function toggleTodo(id) {
+        dispatch({
+            type: "TOGGLE_TODO",
+            payload: id
         })
-    }, [setTodos])
+    }
 
     // Update todo
     // function updateTodo(id, newTitle) {
@@ -232,31 +416,43 @@ function useTodos() {
     //     })
     // }
 
-    const updateTodo = useCallback((id, newTitle) => {
+    // const updateTodo = useCallback((id, newTitle) => {
 
-        // React gives you the latest array of todos.
-        setTodos(prevTodos => { 
+    //     // React gives you the latest array of todos.
+    //     setTodos(prevTodos => { 
 
-            // Create a new array by looking at each todo one by one.
-            return prevTodos.map(todo => {
+    //         // Create a new array by looking at each todo one by one.
+    //         return prevTodos.map(todo => {
 
-                // "Is this the todo the user clicked?"
-                if (todo.id === id) {
+    //             // "Is this the todo the user clicked?"
+    //             if (todo.id === id) {
 
-                    // Create a new object that copies all the existing properties.
-                    // Overwrite only the completed property.   
-                    return {
-                        ...todo,
-                        title: newTitle
-                    }
-                }
+    //                 // Create a new object that copies all the existing properties.
+    //                 // Overwrite only the completed property.   
+    //                 return {
+    //                     ...todo,
+    //                     title: newTitle
+    //                 }
+    //             }
 
-                // If this isn't the todo we're updating, leave it unchanged.
-                return todo;
-            })
+    //             // If this isn't the todo we're updating, leave it unchanged.
+    //             return todo;
+    //         })
+    //     })
+    // }, [setTodos])
+
+    function updateTodo(id, newTitle) {
+        dispatch({
+            type: "UPDATE_TODO",
+            payload: {
+
+                // short hand property syntax
+                id,
+                newTitle
+
+            }
         })
-    }, [setTodos])
-
+    }
     
 
     // -----Use Effects----- 
@@ -266,10 +462,10 @@ function useTodos() {
     // localStorage can only store strings.
 
     // Moved to useLocalStorage.js
-    // useEffect(() => {
-    //     console.log("Saving:", todos)
-    //     localStorage.setItem("todos", JSON.stringify(todos));
-    // }, [todos]);
+    useEffect(() => {
+        console.log("Saving:", todos)
+        localStorage.setItem("todos", JSON.stringify(todos));
+    }, [todos]);
 
     // // Loading todos from local storage
     // useEffect(() => {
@@ -278,6 +474,21 @@ function useTodos() {
     //     ) || [];
     //     setTodos(savedTodos);
     //     setLoading(false)
+    // }, []);
+
+    // useEffect(() => {
+    //     const savedTodos = localStorage.getItem("todos");
+
+    //     if (savedTodos !== null) {
+
+    //         const parsedTodos = JSON.parse(savedTodos);
+
+    //         dispatch({
+    //             type: "LOAD_TODOS",
+    //             payload: parsedTodos
+    //         })
+
+    //     }
     // }, []);
 
     
