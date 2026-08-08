@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 
 function ShowTodos({ todos, deleteTodo, toggleTodo, updateTodo }) {
 
@@ -109,4 +109,10 @@ function ShowTodos({ todos, deleteTodo, toggleTodo, updateTodo }) {
     );
 }
 
-export default ShowTodos;
+
+// React.memo
+// React.memo remembers the previous rendered result of a component
+// and compares its props before rendering again.
+// It mainly helps prevent unnecessary renders caused by
+// the parent rendering while the child's props remain unchanged.
+export default memo(ShowTodos);

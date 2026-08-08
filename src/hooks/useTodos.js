@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useCallback } from 'react';
 
 function useTodos() {    
     
@@ -88,7 +88,27 @@ function useTodos() {
     // -----Functions-----
     // Add a new todo to the list of todos
     // newTodo is the title of the new todo to be added
-    function addNewTodo(newTodo) { 
+    // function addNewTodo(newTodo) { 
+
+    //     // setTodos is called to update the todos state with a new array that includes the previous todos and the new todo
+    //     // inside setTodos, we use a callback function that takes the previous todos as an argument (prevTodos) and returns 
+    //     // a new array that includes all the previous todos and the new todo object.
+    //     setTodos(prevTodos => [ 
+
+    //         // spread operator is used to copy the previous todos into the new array
+    //         ...prevTodos,
+
+    //         // New todo object with a unique id, title, and completed status
+    //         {
+    //             id: Date.now(),
+    //             title: newTodo,
+    //             completed: false
+    //         }
+
+    //     ]);
+    // }
+
+    const addNewTodo = useCallback((newTodo) => {
 
         // setTodos is called to update the todos state with a new array that includes the previous todos and the new todo
         // inside setTodos, we use a callback function that takes the previous todos as an argument (prevTodos) and returns 
@@ -106,25 +126,58 @@ function useTodos() {
             }
 
         ]);
-    }
+    }, [setTodos]);
 
     // Delete a todo from the list of todos
     // the id of the todo to be deleted is passed as an argument from the 
     // ShowTodos component when the delete button is clicked
-    function deleteTodo(id) {
+    // function deleteTodo(id) {
 
-        // React gives you the latest array of todos.
+    //     // React gives you the latest array of todos.
+    //     setTodos(prevTodos => {
+    //         return prevTodos.filter(todo => todo.id !== id);
+    //     }) 
+    // }
+
+    // useMemo     → remembers a calculated VALUE
+    // useCallback → remembers a FUNCTION
+    // React.memo  → memoizes a COMPONENT
+
+    const deleteTodo = useCallback((id) => {
         setTodos(prevTodos => {
             return prevTodos.filter(todo => todo.id !== id);
         }) 
-    }
+    },[setTodos])
 
     // Toggle the completed status of a todo
     // the id of the todo to be toggled is passed as an argument from the 
     // ShowTodos component when the checkbox is clicked
-    function toggleTodo(id) {
+    // function toggleTodo(id) {
 
-        // React gives you the latest array of todos.
+    //     // React gives you the latest array of todos.
+    //     setTodos(prevTodos => { 
+
+    //         // Create a new array by looking at each todo one by one.
+    //         return prevTodos.map(todo => {
+
+    //             // "Is this the todo the user clicked?"
+    //             if (todo.id === id) {
+
+    //                 // Create a new object that copies all the existing properties.
+    //                 // Overwrite only the completed property.   
+    //                 return {
+    //                     ...todo,
+    //                     completed: !todo.completed
+    //                 }
+    //             }
+
+    //             // If this isn't the todo we're updating, leave it unchanged.
+    //             return todo;
+    //         })
+    //     })
+    // }
+
+    const toggleTodo = useCallback((id) => {
         setTodos(prevTodos => { 
 
             // Create a new array by looking at each todo one by one.
@@ -145,10 +198,35 @@ function useTodos() {
                 return todo;
             })
         })
-    }
+    }, [setTodos])
 
     // Update todo
-    function updateTodo(id, newTitle) {
+    // function updateTodo(id, newTitle) {
+
+    //     // React gives you the latest array of todos.
+    //     setTodos(prevTodos => { 
+
+    //         // Create a new array by looking at each todo one by one.
+    //         return prevTodos.map(todo => {
+
+    //             // "Is this the todo the user clicked?"
+    //             if (todo.id === id) {
+
+    //                 // Create a new object that copies all the existing properties.
+    //                 // Overwrite only the completed property.   
+    //                 return {
+    //                     ...todo,
+    //                     title: newTitle
+    //                 }
+    //             }
+
+    //             // If this isn't the todo we're updating, leave it unchanged.
+    //             return todo;
+    //         })
+    //     })
+    // }
+
+    const updateTodo = useCallback((id, newTitle) => {
 
         // React gives you the latest array of todos.
         setTodos(prevTodos => { 
@@ -171,7 +249,7 @@ function useTodos() {
                 return todo;
             })
         })
-    }
+    }, [setTodos])
 
     
 
