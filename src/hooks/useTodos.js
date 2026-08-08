@@ -1,24 +1,30 @@
 import { useMemo, useEffect, useState, useCallback } from 'react';
+import useLocalStorage from "./useLocalStorage.js";
 
 function useTodos() {    
     
-    // -----Use States-----
-    // Things that react needs to remember
-    const [todos, setTodos] = useState(
+    // Encapsulation
+    // This custom hook encapsulates the timer logic, making it reusable across different components. 
+    // It manages the timer state and provides functions to control the timer.
 
-        // Lazy Initializer: React only runs that function once, when creating the state.
-        // Typically needed when computing the initial state SYNCHRONOUSLY
-        () => { 
-            return JSON.parse(localStorage.getItem("todos")) || [];
-        }
-    ); 
+    // -----Use States-----
+    // Moved to useLocalStorage.js
+    // // Things that react needs to remember
+    const [todos, setTodos] = useLocalStorage("todos",[]);
+
+    //     // Lazy Initializer: React only runs that function once, when creating the state.
+    //     // Typically needed when computing the initial state SYNCHRONOUSLY
+    //     () => { 
+    //         return JSON.parse(localStorage.getItem("todos")) || [];
+    //     }
+    // ); 
     const [filter, setFilter] = useState("all");
     const [searchTitle, setSearchTitle] = useState("");
     const [sortBy, setSortBy] = useState("newest");
 
     // These states are only typically needed for loading data ASYNCHRONOUSLY
-    const [loading, setLoading] = useState(true); // when the component first mounts, show a loading state, set loading to true
-    const [error, setError] = useState(null); // check for errors when fetching data, set error to null
+    // const [loading, setLoading] = useState(true); // when the component first mounts, show a loading state, set loading to true
+    // const [error, setError] = useState(null); // check for errors when fetching data, set error to null
 
     // -----Derived States-----
     // Derived states are things react can calculate
@@ -258,10 +264,12 @@ function useTodos() {
     // Save the latest todos to localStorage whenever the todos state changes.
     // JSON.stringify() converts the todos array into a string because
     // localStorage can only store strings.
-    useEffect(() => {
-        console.log("Saving:", todos)
-        localStorage.setItem("todos", JSON.stringify(todos));
-    }, [todos]);
+
+    // Moved to useLocalStorage.js
+    // useEffect(() => {
+    //     console.log("Saving:", todos)
+    //     localStorage.setItem("todos", JSON.stringify(todos));
+    // }, [todos]);
 
     // // Loading todos from local storage
     // useEffect(() => {
